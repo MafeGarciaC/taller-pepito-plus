@@ -93,29 +93,30 @@
 
 ### RF1 — Registro de persona
 **Sustenta:** RF1
-**Captura:** _(pendiente)_
-**Dónde se tomó:** _(pendiente)_
-**Qué demuestra:** _(pendiente)_
+**Captura:** `08_rf1_formulario.png`, `09_rf1_listado.png`
+**Dónde se tomó:** Navegador, `http://localhost:5000/personas/nueva` y `http://localhost:5000/personas`
+**Qué demuestra:** El sistema permite registrar una persona con nombre completo y país obligatorios (validados tanto en frontend con `required` como en backend), persiste los datos en MySQL vía SQLAlchemy, y los datos quedan disponibles para consulta posterior en `/personas`.
 
-### RF2 — Administración de fuentes
+![Formulario de registro](capturas/08_rf1_formulario.png)
+![Listado de personas](capturas/09_rf1_listado.png)
+
+### RF2 — Administración de fuentes por país
 **Sustenta:** RF2
-**Captura:** _(pendiente)_
+**Captura:** `10_rf2_formulario.png`, `11_rf2_listado.png`
+**Dónde se tomó:** Navegador, `http://localhost:5000/fuentes/nueva` y `http://localhost:5000/fuentes`
+**Qué demuestra:** El sistema administra fuentes públicas con los 5 campos mínimos exigidos (nombre, URL inicial, país, tipo, estado), valida que todos sean obligatorios, y permite alternar el estado activa/inactiva desde el listado — funcionalidad clave para RF3, que solo debe crawlear fuentes activas.
 
-### RF3 — Crawling concurrente
-**Sustenta:** RF3
-**Captura:** _(pendiente — deberá incluir evidencia de múltiples workers ejecutando simultáneamente, ej. logs con timestamps o consola mostrando varios hilos activos)_
+![Formulario de registro de fuente](capturas/10_rf2_formulario.png)
+![Listado de fuentes con toggle de estado](capturas/11_rf2_listado.png)
 
-### RF4 — Control concurrente de URLs
-**Sustenta:** RF4
-**Captura:** _(pendiente — tabla `urls` en MySQL mostrando distintos estados)_
+### RF3, RF4, RF5, RF6 — Crawler concurrente completo
+**Sustenta:** RF3, RF4, RF5, RF6
+**Captura:** `12_rf3_resultado_busqueda.png`, `13_rf4_estados_urls.png`
+**Dónde se tomó:** Navegador, `http://localhost:5000/busquedas/1`; MySQL Workbench, `SELECT estado, COUNT(*) FROM urls GROUP BY estado`
+**Qué demuestra:** El crawler procesó 50 URLs con 5 workers en 62.5 segundos, sin URLs bloqueadas en EN_PROCESAMIENTO (confirmando que el Lock evita el procesamiento duplicado exigido por RF4). Clasificó correctamente 1 documento relacionado y 25 descartados con su motivo (RF5), y el límite de exploración se respetó dejando URLs pendientes sin procesar por diseño (RF3).
 
-### RF5 — Identificación de contenido relacionado
-**Sustenta:** RF5
-**Captura:** _(pendiente — vista de documentos descartados con su motivo)_
-
-### RF6 — Extracción, indexación y persistencia
-**Sustenta:** RF6
-**Captura:** _(pendiente — tabla `documentos` con registros reales)_
+![Resultado de búsqueda](capturas/12_rf3_resultado_busqueda.png)
+![Estados de URLs en la base de datos](capturas/13_rf4_estados_urls.png)
 
 ### RF7 — Verificación de identidad
 **Sustenta:** RF7
