@@ -164,10 +164,10 @@ Esto representa una mejora de ~2.4x en velocidad al paralelizar con 5 workers fr
 
 ![Diagrama de arquitectura de software](diagramas/arquitectura_software.svg)
 
-### Diagrama de arquitectura de software
-**Sustenta:** Entregable "Diagrama de arquitectura de software"
-**Captura:** `diagramas/arquitectura_software.svg`
-**Dónde se generó:** Diseñado a partir de la estructura real de carpetas del proyecto (app/routes.py, app/crawler/, app/services/, app/models.py)
-**Qué demuestra:** La separación de responsabilidades en capas: presentación, aplicación, servicios de negocio (RF5, RF7, RF8), concurrencia (RF3, RF4), persistencia (ORM) y datos (MySQL), junto con la dependencia externa hacia los sitios web crawleados.
+### Diagrama de infraestructura
+**Sustenta:** Entregable "Diagrama de infraestructura"
+**Captura:** `diagramas/infraestructura.svg`
+**Dónde se generó:** Basado en el entorno real de desarrollo (Windows, Flask dev server, MySQL local)
+**Qué demuestra:** El despliegue actual es de un solo nodo — navegador, servidor de aplicación y base de datos conviven en el mismo equipo — con salida de red hacia Internet para el crawling de fuentes públicas, y versionado del código vía Git/GitHub.
 
-![Diagrama de arquitectura de software](diagramas/arquitectura_software.svg)
+![Diagrama de infraestructura](diagramas/infraestructura.svg)
