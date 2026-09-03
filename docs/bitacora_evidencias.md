@@ -120,24 +120,54 @@
 
 ### RF7 — Verificación de identidad
 **Sustenta:** RF7
-**Captura:** _(pendiente — tabla `documento_analisis` con los 4 estados representados)_
+**Captura:** `14_rf7_verificacion_identidad.png`
+**Dónde se tomó:** Navegador, `http://localhost:5000/busquedas/2`
+**Qué demuestra:** Cada documento relacionado (que pasó RF5) es analizado para determinar su nivel de correspondencia con la persona consultada, guardando el resultado en la tabla `documento_analisis`. En esta ejecución el sistema clasificó correctamente como NO_DETERMINADO un documento que coincidió solo por palabra relacionada, sin evidencia fuerte de identidad (nombre, alias, ciudad, profesión u organización).
+
+![Verificación de identidad](capturas/14_rf7_verificacion_identidad.png)
 
 ### RF8 — Clasificación contextual
 **Sustenta:** RF8
-**Captura:** _(pendiente)_
+**Captura:** `15_rf8_clasificacion_contextual.png`, `16_rf8_neutro_misma_persona.png`
+**Dónde se tomó:** Navegador, `http://localhost:5000/busquedas/3`
+**Qué demuestra:** El sistema clasifica el contexto (POSITIVO/NEUTRO/NEGATIVO) únicamente en documentos donde RF7 confirmó MISMA_PERSONA o POSIBLE_COINCIDENCIA, dejando N/A en los casos de PERSONA_DIFERENTE. Con una persona real (Gustavo Petro) se obtuvieron los 4 estados de RF7 y clasificaciones NEGATIVO y NEUTRO en documentos reales de El Tiempo, confirmando que el análisis está atado al contexto de las oraciones donde se menciona a la persona, no a palabras sueltas en toda la página.
+
+![Verificación y clasificación - vista 1](capturas/15_rf8_clasificacion_contextual.png)
 
 ### RF9 — Consulta y filtrado de resultados
 **Sustenta:** RF9
-**Captura:** _(pendiente — interfaz web con filtros aplicados)_
+**Captura:** `17_rf9_filtro_verificacion.png`, `18_rf9_filtro_clasificacion.png`
+**Dónde se tomó:** Navegador, `http://localhost:5000/resultados` con distintas combinaciones de filtros
+**Qué demuestra:** La vista permite filtrar documentos de todas las búsquedas por clasificación contextual, estado de verificación de identidad, fuente y rango de fechas, aplicando los filtros en conjunto (AND). Se verificó que combinar filtros lógicamente incompatibles (ej. PERSONA_DIFERENTE + NEGATIVO) devuelve 0 resultados correctamente, confirmando la integridad de la regla de negocio entre RF7 y RF8.
+
+![Filtro por verificación de identidad](capturas/17_rf9_filtro_verificacion.png)
+![Filtro por clasificación contextual](capturas/18_rf9_filtro_clasificacion.png)
+
 
 ### Medición de concurrencia
-**Sustenta:** Nota de medición de concurrencia (rúbrica)
-**Captura:** _(pendiente — gráfica o tabla comparando tiempo con 1 worker vs. N workers)_
+**Sustenta:** Nota de medición de concurrencia (rúbrica, 3%)
+**Captura:** `19_metricas_comparacion.png`
+**Dónde se tomó:** Navegador, `http://localhost:5000/metricas`
+**Qué demuestra:** Se compararon dos corridas idénticas en persona (Gustavo Petro), país (Colombia) y límite de exploración (50 URLs), variando únicamente el número de workers:
+- 5 workers: 85.05 segundos
+- 1 worker: 203.89 segundos
+
+Esto representa una mejora de ~2.4x en velocidad al paralelizar con 5 workers frente a ejecución secuencial (1 worker). El resultado es consistente con la naturaleza I/O-bound del crawler: al esperar respuestas HTTP de forma concurrente en vez de secuencial, el tiempo total se reduce casi proporcionalmente al número de workers, con cierta pérdida de eficiencia por la contención en los Locks compartidos (`lock_encolado`, `lock_reclamo`) y el límite de ancho de banda de la conexión.
+
+![Comparación de tiempos por número de workers](capturas/19_metricas_comparacion.png)
 
 ### Diagrama de arquitectura de software
-**Sustenta:** Entregable
-**Captura:** _(pendiente)_
+**Sustenta:** Entregable "Diagrama de arquitectura de software"
+**Captura:** `diagramas/arquitectura_software.svg`
+**Dónde se generó:** Diseñado a partir de la estructura real de carpetas del proyecto (app/routes.py, app/crawler/, app/services/, app/models.py)
+**Qué demuestra:** La separación de responsabilidades en capas: presentación, aplicación, servicios de negocio (RF5, RF7, RF8), concurrencia (RF3, RF4), persistencia (ORM) y datos (MySQL), junto con la dependencia externa hacia los sitios web crawleados.
 
-### Diagrama de infraestructura
-**Sustenta:** Entregable
-**Captura:** _(pendiente)_
+![Diagrama de arquitectura de software](diagramas/arquitectura_software.svg)
+
+### Diagrama de arquitectura de software
+**Sustenta:** Entregable "Diagrama de arquitectura de software"
+**Captura:** `diagramas/arquitectura_software.svg`
+**Dónde se generó:** Diseñado a partir de la estructura real de carpetas del proyecto (app/routes.py, app/crawler/, app/services/, app/models.py)
+**Qué demuestra:** La separación de responsabilidades en capas: presentación, aplicación, servicios de negocio (RF5, RF7, RF8), concurrencia (RF3, RF4), persistencia (ORM) y datos (MySQL), junto con la dependencia externa hacia los sitios web crawleados.
+
+![Diagrama de arquitectura de software](diagramas/arquitectura_software.svg)

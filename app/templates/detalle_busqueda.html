@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Resultado de búsqueda{% endblock %}
+
+{% block content %}
+<h1>Resultados de la búsqueda #{{ busqueda.id }}</h1>
+<p>
+    <strong>Persona:</strong> {{ busqueda.persona.nombre_completo }} &middot;
+    <strong>País:</strong> {{ busqueda.pais }} &middot;
+    <strong>Estado:</strong> {{ busqueda.estado }} &middot;
+    <strong>Workers usados:</strong> {{ busqueda.num_workers }}
+</p>
+
+<h2 style="font-size:16px;">Documentos relacionados</h2>
+{% set relacionados = documentos | selectattr("es_relacionado") | list %}
+{% if relacionados %}
+<table>
+    <thead><tr><th>Título</th><th>URL</th><th>Fuente</th><th>Verificación de identidad</th><th>Clasificación contextual</th></tr></thead>
+    <tbody>
+        {% for d in relacionados %}
+        <tr>
+            <td>{{ d.titulo }}</td>
+            <td><a href="{{ d.url }}" target="_blank">{{ d.url[:60] }}...</a></td>
+            <td>{{ d.fuente.nombre }}</td>
+            <td>
+                {% if d.analisis %}
+                    <span style="padding:2px 8px;border-radius:10px;font-size:12px;
+                        background:{{ '#dcfce7' if d.analisis.verificacion_identidad == 'MISMA_PERSONA'
+                            else '#fef9c3' if d.analisis.verificacion_identidad == 'POSIBLE_COINCIDENCIA'
+                            else '#fee2e2' if d.analisis.verificacion_identidad == 'PERSONA_DIFERENTE'
+                            else '#e5e7eb' }};">
+                        {{ d.analisis.verificacion_identidad }}
+                    </span>
+                {% else %}
+                    <span style="color:#9ca3af;">Sin analizar</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if d.analisis and d.analisis.clasificacion_contextual %}
+                    <span style="padding:2px 8px;border-radius:10px;font-size:12px;
+                        background:{{ '#dcfce7' if d.analisis.clasificacion_contextual == 'POSITIVO'
+                            else '#fee2e2' if d.analisis.clasificacion_contextual == 'NEGATIVO'
+                            else '#dbeafe' if d.analisis.clasificacion_contextual == 'NEUTRO'
+                            else '#e5e7eb' }};">
+                        {{ d.analisis.clasificacion_contextual }}
+                    </span>
+                {% else %}
+                    <span style="color:#9ca3af;">N/A</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No se encontraron documentos relacionados.</p>
+{% endif %}
+
+<h2 style="font-size:16px;margin-top:24px;">Documentos descartados</h2>
+{% set descartados = documentos | rejectattr("es_relacionado") | list %}
+{% if descartados %}
+<table>
+    <thead><tr><th>Título</th><th>Motivo del descarte</th></tr></thead>
+    <tbody>
+        {% for d in descartados %}
+        <tr>
+            <td>{{ d.titulo }}</td>
+            <td style="font-size:12px;color:#6b7280;">{{ d.motivo_descarte }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No hay documentos descartados.</p>
+{% endif %}
+{% endblock %}

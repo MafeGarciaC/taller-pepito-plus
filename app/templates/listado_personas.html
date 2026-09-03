@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Listado de personas{% endblock %}
+
+{% block content %}
+<h1>Personas registradas</h1>
+
+{% if personas %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre completo</th>
+            <th>País</th>
+            <th>Ciudad</th>
+            <th>Alias</th>
+            <th>Fecha de registro</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in personas %}
+        <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.nombre_completo }}</td>
+            <td>{{ p.pais }}</td>
+            <td>{{ p.ciudad or "-" }}</td>
+            <td>{{ p.alias or "-" }}</td>
+            <td>{{ p.fecha_registro.strftime("%Y-%m-%d %H:%M") }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No hay personas registradas todavía.</p>
+{% endif %}
+{% endblock %}

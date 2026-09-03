@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Registrar fuente{% endblock %}
+
+{% block content %}
+<h1>Registrar fuente pública</h1>
+<p style="font-size:13px;color:#6b7280;">
+    Todos los campos son obligatorios (RF2). Recuerda: la asociación de una
+    fuente con un país corresponde al ámbito de su contenido, no a dónde
+    está alojado su servidor.
+</p>
+
+<form method="POST" action="/fuentes/nueva">
+
+    <label for="nombre">Nombre de la fuente <span class="obligatorio">*</span></label>
+    <input type="text" id="nombre" name="nombre" required
+           placeholder="Ej: El Tiempo, LinkedIn Colombia"
+           value="{{ form_data.nombre if form_data else '' }}">
+
+    <label for="url_inicial">URL inicial (Seed URL) <span class="obligatorio">*</span></label>
+    <input type="url" id="url_inicial" name="url_inicial" required
+           placeholder="https://www.ejemplo.com"
+           value="{{ form_data.url_inicial if form_data else '' }}">
+
+    <label for="pais">País <span class="obligatorio">*</span></label>
+    <input type="text" id="pais" name="pais" required
+           placeholder="Ej: Colombia"
+           value="{{ form_data.pais if form_data else '' }}">
+
+    <label for="tipo">Tipo de fuente <span class="obligatorio">*</span></label>
+    <select id="tipo" name="tipo" required>
+        <option value="">-- Selecciona --</option>
+        <option value="NOTICIAS">Medio de noticias</option>
+        <option value="RED_SOCIAL">Red social</option>
+        <option value="BLOG">Blog</option>
+        <option value="DIRECTORIO">Directorio / Páginas amarillas</option>
+        <option value="GUBERNAMENTAL">Sitio gubernamental</option>
+        <option value="OTRO">Otro</option>
+    </select>
+
+    <label for="estado">Estado <span class="obligatorio">*</span></label>
+    <select id="estado" name="estado" required>
+        <option value="ACTIVA">Activa</option>
+        <option value="INACTIVA">Inactiva</option>
+    </select>
+
+    <button type="submit">Registrar fuente</button>
+</form>
+{% endblock %}

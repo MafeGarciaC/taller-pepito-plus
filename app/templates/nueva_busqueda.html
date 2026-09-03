@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Nueva búsqueda{% endblock %}
+
+{% block content %}
+<h1>Iniciar búsqueda (crawling)</h1>
+<p style="font-size:13px;color:#6b7280;">
+    Esto lanzará el crawler concurrente sobre las fuentes activas del país
+    seleccionado. La página se quedará "cargando" mientras el crawling
+    corre en el servidor (RF3).
+</p>
+
+<form method="POST" action="/busquedas/nueva">
+    <label for="persona_id">Persona a consultar <span class="obligatorio">*</span></label>
+    <select id="persona_id" name="persona_id" required>
+        <option value="">-- Selecciona --</option>
+        {% for p in personas %}
+        <option value="{{ p.id }}">{{ p.nombre_completo }} ({{ p.pais }})</option>
+        {% endfor %}
+    </select>
+
+    <label for="pais">País de búsqueda <span class="obligatorio">*</span></label>
+    <input type="text" id="pais" name="pais" required placeholder="Ej: Colombia">
+
+    <label for="num_workers">Número de workers</label>
+    <input type="number" id="num_workers" name="num_workers" value="5" min="1" max="20">
+
+    <button type="submit">Iniciar crawling</button>
+</form>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Medición de concurrencia{% endblock %}
+
+{% block content %}
+<h1>Medición de concurrencia</h1>
+<p style="font-size:13px;color:#6b7280;">
+    Comparación del tiempo total de crawling según el número de workers
+    utilizado. Para que la comparación sea válida, corre búsquedas con la
+    <strong>misma persona y el mismo país</strong> variando solo el número
+    de workers (condiciones equivalentes).
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Búsqueda</th>
+            <th>Persona</th>
+            <th>País</th>
+            <th>Workers</th>
+            <th>URLs procesadas</th>
+            <th>Tiempo total</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for m in metricas %}
+        <tr>
+            <td>#{{ m.busqueda_id }}</td>
+            <td>{{ m.busqueda.persona.nombre_completo }}</td>
+            <td>{{ m.busqueda.pais }}</td>
+            <td>{{ m.num_workers }}</td>
+            <td>{{ m.elementos_procesados }}</td>
+            <td>{{ (m.tiempo_total_ms / 1000) | round(2) }} s</td>
+            <td>{{ m.fecha_ejecucion.strftime("%Y-%m-%d %H:%M") }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2 style="font-size:16px;margin-top:28px;">Comparación visual (tiempo total por corrida)</h2>
+{% for m in metricas %}
+<div style="margin-bottom:12px;">
+    <div style="font-size:12px;color:#374151;margin-bottom:2px;">
+        Búsqueda #{{ m.busqueda_id }} &middot; {{ m.num_workers }} worker(s) &middot; {{ (m.tiempo_total_ms/1000)|round(2) }} s
+    </div>
+    <div style="background:#2563eb;height:20px;border-radius:3px;
+                width:{{ (m.tiempo_total_ms / max_tiempo * 100) | round(1) }}%;
+                min-width:4px;"></div>
+</div>
+{% endfor %}
+
+{% if metricas|length < 2 %}
+<p style="margin-top:20px;color:#991b1b;font-size:13px;">
+    Necesitas al menos 2 corridas (con distinto número de workers, misma
+    persona y país) para tener una comparación real. Corre otra búsqueda
+    con <strong>num_workers=1</strong> para completar el análisis.
+</p>
+{% endif %}
+{% endblock %}
