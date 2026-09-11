@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Medición de concurrencia{% endblock %}
+{% block title %}Métricas de concurrencia{% endblock %}
 
 {% block content %}
 <h1>Medición de concurrencia</h1>
-<p style="font-size:13px;color:#6b7280;">
-    Comparación del tiempo total de crawling según el número de workers
-    utilizado. Para que la comparación sea válida, corre búsquedas con la
-    <strong>misma persona y el mismo país</strong> variando solo el número
-    de workers (condiciones equivalentes).
+<p class="hint">
+    Compara corridas con distinto número de workers sobre la <strong>misma persona y país</strong>
+    para ver el impacto real del procesamiento concurrente (RF3). Incluye 1 worker como referencia.
 </p>
 
+{% if metricas %}
+<div class="overflow-x">
 <table>
     <thead>
         <tr>
@@ -19,6 +19,7 @@
             <th>Workers</th>
             <th>URLs procesadas</th>
             <th>Tiempo total</th>
+            <th>ms / URL</th>
             <th>Fecha</th>
         </tr>
     </thead>
@@ -28,32 +29,60 @@
             <td>#{{ m.busqueda_id }}</td>
             <td>{{ m.busqueda.persona.nombre_completo }}</td>
             <td>{{ m.busqueda.pais }}</td>
-            <td>{{ m.num_workers }}</td>
+            <td>
+                <span class="badge {{ 'badge-green' if m.num_workers >= 5 else 'badge-yellow' if m.num_workers > 1 else 'badge-gray' }}">
+                    {{ m.num_workers }} worker{{ 's' if m.num_workers > 1 else '' }}
+                </span>
+            </td>
             <td>{{ m.elementos_procesados }}</td>
-            <td>{{ (m.tiempo_total_ms / 1000) | round(2) }} s</td>
-            <td>{{ m.fecha_ejecucion.strftime("%Y-%m-%d %H:%M") }}</td>
+            <td><strong>{{ (m.tiempo_total_ms / 1000) | round(2) }} s</strong></td>
+            <td>
+                {% if m.elementos_procesados > 0 %}
+                    {{ (m.tiempo_total_ms / m.elementos_procesados) | round(0) | int }} ms
+                {% else %}
+                    <span style="color:#9ca3af;">—</span>
+                {% endif %}
+            </td>
+            <td style="font-size:12px;">{{ m.fecha_ejecucion.strftime("%Y-%m-%d %H:%M") }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+</div>
 
-<h2 style="font-size:16px;margin-top:28px;">Comparación visual (tiempo total por corrida)</h2>
+<h2 style="margin-top:32px;">Comparación visual — tiempo total por corrida</h2>
 {% for m in metricas %}
-<div style="margin-bottom:12px;">
-    <div style="font-size:12px;color:#374151;margin-bottom:2px;">
-        Búsqueda #{{ m.busqueda_id }} &middot; {{ m.num_workers }} worker(s) &middot; {{ (m.tiempo_total_ms/1000)|round(2) }} s
+<div style="margin-bottom:14px;">
+    <div style="font-size:13px;color:#374151;margin-bottom:3px;">
+        <strong>#{{ m.busqueda_id }}</strong> &nbsp;·&nbsp;
+        {{ m.num_workers }} worker{{ 's' if m.num_workers > 1 else '' }} &nbsp;·&nbsp;
+        {{ (m.tiempo_total_ms / 1000) | round(2) }} s &nbsp;·&nbsp;
+        {{ m.elementos_procesados }} URLs
     </div>
-    <div style="background:#2563eb;height:20px;border-radius:3px;
-                width:{{ (m.tiempo_total_ms / max_tiempo * 100) | round(1) }}%;
-                min-width:4px;"></div>
+    <div style="background:#e5e7eb;border-radius:4px;height:24px;position:relative;">
+        <div style="
+            background: {{ '#16a34a' if m.num_workers >= 5 else '#2563eb' if m.num_workers > 1 else '#6b7280' }};
+            height:100%;border-radius:4px;
+            width:{{ [[(m.tiempo_total_ms / max_tiempo * 100) | round(1), 2] | max, 100] | min }}%;
+            min-width:4px;
+            display:flex;align-items:center;padding-left:8px;">
+            <span style="font-size:11px;color:#fff;white-space:nowrap;">
+                {{ (m.tiempo_total_ms / 1000) | round(2) }} s
+            </span>
+        </div>
+    </div>
 </div>
 {% endfor %}
 
 {% if metricas|length < 2 %}
-<p style="margin-top:20px;color:#991b1b;font-size:13px;">
-    Necesitas al menos 2 corridas (con distinto número de workers, misma
-    persona y país) para tener una comparación real. Corre otra búsqueda
-    con <strong>num_workers=1</strong> para completar el análisis.
-</p>
+<div class="flash error" style="margin-top:24px;">
+    Necesitas al menos 2 corridas con distinto número de workers para tener comparación.
+    Ve a <a href="/busquedas/nueva">Nueva búsqueda</a> y prueba con <strong>1 worker</strong> para tener la línea base.
+</div>
+{% endif %}
+
+{% else %}
+<p class="hint">Aún no hay métricas registradas. Corre una búsqueda primero.</p>
+<a href="/busquedas/nueva" class="btn">Iniciar primera búsqueda »</a>
 {% endif %}
 {% endblock %}

@@ -17,8 +17,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
  
-    # Crea automáticamente las tablas si no existen todavía
-    # (no es obligatorio si ya corriste schema.sql, pero es una red de seguridad)
+    # Crea las tablas si no existen
     Base.metadata.create_all(bind=engine)
  
     from app.routes import bp as main_bp

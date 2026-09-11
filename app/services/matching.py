@@ -1,19 +1,4 @@
-"""
-RF5: Identificación de contenido relacionado.
-
-Determina si el texto de una página descargada tiene alguna coincidencia
-con los datos registrados de la persona (nombre, alias, ciudad, profesión,
-organización, palabras relacionadas). Esta es una versión simple basada
-en coincidencia de texto -- se puede sofisticar más adelante.
-"""
-
-
 def es_contenido_relacionado(persona, texto):
-    """
-    Devuelve (True, None) si hay al menos una coincidencia, o
-    (False, motivo) si no se encontró ninguna -- el motivo se guarda
-    en el documento para que RF5 pueda mostrar por qué fue descartado.
-    """
     texto_lower = texto.lower()
 
     candidatos = [persona.nombre_completo]

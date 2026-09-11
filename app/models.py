@@ -89,7 +89,7 @@ class Url(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     busqueda_id = Column(Integer, ForeignKey("busquedas.id", ondelete="CASCADE"), nullable=False)
     fuente_id = Column(Integer, ForeignKey("fuentes.id"), nullable=False)
-    url = Column(String(1000), nullable=False)
+    url = Column(String(500), nullable=False)
     estado = Column(
         Enum("PENDIENTE", "EN_PROCESAMIENTO", "PROCESADA", "DESCARTADA", "ERROR", name="estado_url"),
         default="PENDIENTE", nullable=False
@@ -117,7 +117,7 @@ class Documento(Base):
     url_id = Column(Integer, ForeignKey("urls.id", ondelete="CASCADE"), nullable=False)
     busqueda_id = Column(Integer, ForeignKey("busquedas.id", ondelete="CASCADE"), nullable=False)
     titulo = Column(String(500))
-    url = Column(String(1000), nullable=False)
+    url = Column(String(500), nullable=False)
     fuente_id = Column(Integer, ForeignKey("fuentes.id"), nullable=False)
     pais = Column(String(100))
     fecha_publicacion = Column(Date, nullable=True)

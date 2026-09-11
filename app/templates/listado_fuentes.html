@@ -1,14 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Listado de fuentes{% endblock %}
+{% block title %}Fuentes registradas{% endblock %}
 
 {% block content %}
-<h1>Fuentes registradas</h1>
+<div class="top-bar">
+    <h1>Fuentes registradas</h1>
+    <a href="/fuentes/nueva" class="btn">+ Nueva fuente</a>
+</div>
 
 {% if fuentes %}
+<div class="overflow-x">
 <table>
     <thead>
         <tr>
-            <th>ID</th>
+            <th>#</th>
             <th>Nombre</th>
             <th>URL inicial</th>
             <th>País</th>
@@ -21,21 +25,24 @@
         {% for f in fuentes %}
         <tr>
             <td>{{ f.id }}</td>
-            <td>{{ f.nombre }}</td>
-            <td><a href="{{ f.url_inicial }}" target="_blank" rel="noopener">{{ f.url_inicial }}</a></td>
+            <td><strong>{{ f.nombre }}</strong></td>
+            <td style="max-width:240px;font-size:12px;">
+                <a href="{{ f.url_inicial }}" target="_blank" rel="noopener" style="word-break:break-all;">
+                    {{ f.url_inicial[:70] }}{% if f.url_inicial|length > 70 %}…{% endif %}
+                </a>
+            </td>
             <td>{{ f.pais }}</td>
             <td>{{ f.tipo }}</td>
             <td>
-                <span style="padding:2px 8px;border-radius:10px;font-size:12px;
-                    background:{{ '#dcfce7' if f.estado == 'ACTIVA' else '#fee2e2' }};
-                    color:{{ '#166534' if f.estado == 'ACTIVA' else '#991b1b' }};">
+                <span class="badge {{ 'badge-green' if f.estado == 'ACTIVA' else 'badge-red' }}">
                     {{ f.estado }}
                 </span>
             </td>
             <td>
                 <form method="POST" action="/fuentes/{{ f.id }}/toggle" style="margin:0;">
-                    <button type="submit" style="margin:0;padding:4px 10px;font-size:12px;
-                        background:{{ '#dc2626' if f.estado == 'ACTIVA' else '#16a34a' }};">
+                    <button type="submit"
+                        class="btn btn-sm {{ 'btn-red' if f.estado == 'ACTIVA' else 'btn-green' }}"
+                        style="margin:0;">
                         {{ 'Desactivar' if f.estado == 'ACTIVA' else 'Activar' }}
                     </button>
                 </form>
@@ -44,7 +51,9 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
 {% else %}
-<p>No hay fuentes registradas todavía.</p>
+<p class="hint">No hay fuentes registradas todavía.</p>
+<a href="/fuentes/nueva" class="btn">+ Registrar primera fuente</a>
 {% endif %}
 {% endblock %}

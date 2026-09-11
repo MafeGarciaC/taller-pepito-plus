@@ -3,6 +3,7 @@ Rutas de la aplicación web.
 """
 
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash
+from sqlalchemy.orm import joinedload
 from app import SessionLocal
 from app.models import Fuente, Persona, Busqueda, Documento, DocumentoAnalisis, MetricaConcurrencia
 from app.crawler import ejecutar_crawling
@@ -12,7 +13,21 @@ bp = Blueprint("main", __name__)
 
 @bp.route("/")
 def index():
-    return jsonify({"status": "ok", "mensaje": "Pepito Plus API funcionando"})
+    session = SessionLocal()
+    try:
+        stats = {
+            "personas": session.query(Persona).count(),
+            "fuentes_activas": session.query(Fuente).filter_by(estado="ACTIVA").count(),
+            "busquedas": session.query(Busqueda).count(),
+            "documentos": session.query(Documento).count(),
+        }
+        ultimas = (session.query(Busqueda)
+                   .options(joinedload(Busqueda.persona))
+                   .order_by(Busqueda.id.desc())
+                   .limit(5).all())
+    finally:
+        session.close()
+    return render_template("index.html", stats=stats, ultimas=ultimas)
 
 
 @bp.route("/test-db")
@@ -197,9 +212,6 @@ def nueva_busqueda():
     finally:
         session.close()
 
-    # El crawling corre aquí de forma sincrona: la petición HTTP espera
-    # hasta que termine. Para el taller esto es suficiente; en producción
-    # se lanzaría en segundo plano (ej. con Celery) para no bloquear al usuario.
     resultado = ejecutar_crawling(busqueda_id, persona_id, pais, num_workers=num_workers)
 
     flash(

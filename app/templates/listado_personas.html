@@ -1,35 +1,49 @@
 {% extends "base.html" %}
-{% block title %}Listado de personas{% endblock %}
+{% block title %}Personas registradas{% endblock %}
 
 {% block content %}
-<h1>Personas registradas</h1>
+<div class="top-bar">
+    <h1>Personas registradas</h1>
+    <a href="/personas/nueva" class="btn">+ Nueva persona</a>
+</div>
 
 {% if personas %}
+<div class="overflow-x">
 <table>
     <thead>
         <tr>
-            <th>ID</th>
+            <th>#</th>
             <th>Nombre completo</th>
             <th>País</th>
             <th>Ciudad</th>
+            <th>Profesión / cargo</th>
+            <th>Empresa / organización</th>
             <th>Alias</th>
-            <th>Fecha de registro</th>
+            <th>Fecha registro</th>
+            <th>Acción</th>
         </tr>
     </thead>
     <tbody>
         {% for p in personas %}
         <tr>
             <td>{{ p.id }}</td>
-            <td>{{ p.nombre_completo }}</td>
+            <td><strong>{{ p.nombre_completo }}</strong></td>
             <td>{{ p.pais }}</td>
-            <td>{{ p.ciudad or "-" }}</td>
-            <td>{{ p.alias or "-" }}</td>
-            <td>{{ p.fecha_registro.strftime("%Y-%m-%d %H:%M") }}</td>
+            <td>{{ p.ciudad or "—" }}</td>
+            <td>{{ p.profesion_cargo or "—" }}</td>
+            <td>{{ p.empresa_organizacion or "—" }}</td>
+            <td>{{ p.alias or "—" }}</td>
+            <td>{{ p.fecha_registro.strftime("%Y-%m-%d") }}</td>
+            <td>
+                <a href="/busquedas/nueva" class="btn btn-sm btn-green">Buscar</a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+</div>
 {% else %}
-<p>No hay personas registradas todavía.</p>
+<p class="hint">No hay personas registradas todavía.</p>
+<a href="/personas/nueva" class="btn">+ Registrar primera persona</a>
 {% endif %}
 {% endblock %}

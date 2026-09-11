@@ -1,48 +1,122 @@
 {% extends "base.html" %}
-{% block title %}Registrar fuente{% endblock %}
+{% block title %}Registrar Fuente — Pepito Plus{% endblock %}
 
 {% block content %}
-<h1>Registrar fuente pública</h1>
-<p style="font-size:13px;color:#6b7280;">
-    Todos los campos son obligatorios (RF2). Recuerda: la asociación de una
-    fuente con un país corresponde al ámbito de su contenido, no a dónde
-    está alojado su servidor.
-</p>
+<style>
+.form-section {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 32px;
+}
+.form-sidebar {
+    border-right: 1px solid #ddd;
+    padding-right: 28px;
+}
+.form-sidebar-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    border-bottom: 2px solid var(--color-accent);
+    padding-bottom: 6px;
+}
+.form-sidebar-text {
+    font-family: var(--font-serif);
+    font-size: 13px;
+    color: var(--color-text-muted);
+    line-height: 1.7;
+}
+.form-sidebar-text strong {
+    color: var(--color-dark);
+}
+.form-main {}
+.form-row {
+    margin-bottom: 4px;
+}
+.form-row label {
+    border-bottom: 1px dotted #ddd;
+    padding-bottom: 4px;
+}
+.form-row input, .form-row select {
+    border: 1px solid #ddd;
+    border-left: 3px solid var(--color-accent);
+}
+.form-row input:focus, .form-row select:focus {
+    border-left-color: #1565c0;
+}
+@media (max-width: 768px) {
+    .form-section { grid-template-columns: 1fr; }
+    .form-sidebar { border-right: none; padding-right: 0; border-bottom: 1px solid #ddd; padding-bottom: 20px; }
+}
+</style>
 
-<form method="POST" action="/fuentes/nueva">
+<div class="top-bar">
+    <h1>Registrar Fuente Pública</h1>
+    <a href="/fuentes" class="btn btn-gray">← Volver al Listado</a>
+</div>
 
-    <label for="nombre">Nombre de la fuente <span class="obligatorio">*</span></label>
-    <input type="text" id="nombre" name="nombre" required
-           placeholder="Ej: El Tiempo, LinkedIn Colombia"
-           value="{{ form_data.nombre if form_data else '' }}">
+<div class="form-section">
+    <div class="form-sidebar">
+        <img src="{{ url_for('static', filename='images/seccion_fuentes.jpg') }}" alt="Agencias y Medios" style="width:100%;height:140px;object-fit:cover;margin-bottom:12px;border:1px solid #ccc;">
+        <div class="form-sidebar-title">Parámetros de Fuente (RF2)</div>
+        <div class="form-sidebar-text">
+            Todos los campos son <strong>obligatorios</strong> bajo el requerimiento RF2.<br><br>
+            La asociación con un país corresponde al <strong>ámbito editorial y geográfico del contenido</strong>, no a la ubicación física del servidor.<br><br>
+            <strong>Tipologías admitidas:</strong> Periódico de noticias, portal gubernamental, blog de investigación o directorio público.
+        </div>
+    </div>
 
-    <label for="url_inicial">URL inicial (Seed URL) <span class="obligatorio">*</span></label>
-    <input type="url" id="url_inicial" name="url_inicial" required
-           placeholder="https://www.ejemplo.com"
-           value="{{ form_data.url_inicial if form_data else '' }}">
+    <div class="form-main">
+        <form method="POST" action="/fuentes/nueva">
+            <div class="form-row">
+                <label for="nombre">Nombre de la fuente <span class="obligatorio">*</span></label>
+                <input type="text" id="nombre" name="nombre" required
+                       placeholder="Ej: El Tiempo, LinkedIn Colombia"
+                       value="{{ form_data.nombre if form_data else '' }}">
+            </div>
 
-    <label for="pais">País <span class="obligatorio">*</span></label>
-    <input type="text" id="pais" name="pais" required
-           placeholder="Ej: Colombia"
-           value="{{ form_data.pais if form_data else '' }}">
+            <div class="form-row">
+                <label for="url_inicial">URL Inicial (Seed URL) <span class="obligatorio">*</span></label>
+                <input type="url" id="url_inicial" name="url_inicial" required
+                       placeholder="https://www.ejemplo.com"
+                       value="{{ form_data.url_inicial if form_data else '' }}">
+            </div>
 
-    <label for="tipo">Tipo de fuente <span class="obligatorio">*</span></label>
-    <select id="tipo" name="tipo" required>
-        <option value="">-- Selecciona --</option>
-        <option value="NOTICIAS">Medio de noticias</option>
-        <option value="RED_SOCIAL">Red social</option>
-        <option value="BLOG">Blog</option>
-        <option value="DIRECTORIO">Directorio / Páginas amarillas</option>
-        <option value="GUBERNAMENTAL">Sitio gubernamental</option>
-        <option value="OTRO">Otro</option>
-    </select>
+            <div class="form-row">
+                <label for="pais">País <span class="obligatorio">*</span></label>
+                <input type="text" id="pais" name="pais" required
+                       placeholder="Ej: Colombia"
+                       value="{{ form_data.pais if form_data else '' }}">
+            </div>
 
-    <label for="estado">Estado <span class="obligatorio">*</span></label>
-    <select id="estado" name="estado" required>
-        <option value="ACTIVA">Activa</option>
-        <option value="INACTIVA">Inactiva</option>
-    </select>
+            <div class="form-row">
+                <label for="tipo">Tipo de Fuente <span class="obligatorio">*</span></label>
+                <select id="tipo" name="tipo" required>
+                    <option value="">-- Selecciona --</option>
+                    {% set tipo_actual = form_data.tipo if form_data else '' %}
+                    <option value="NOTICIAS"      {{ 'selected' if tipo_actual == 'NOTICIAS' }}>Medio de noticias</option>
+                    <option value="RED_SOCIAL"    {{ 'selected' if tipo_actual == 'RED_SOCIAL' }}>Red social</option>
+                    <option value="BLOG"          {{ 'selected' if tipo_actual == 'BLOG' }}>Blog</option>
+                    <option value="DIRECTORIO"    {{ 'selected' if tipo_actual == 'DIRECTORIO' }}>Directorio / Páginas amarillas</option>
+                    <option value="GUBERNAMENTAL" {{ 'selected' if tipo_actual == 'GUBERNAMENTAL' }}>Sitio gubernamental</option>
+                    <option value="OTRO"          {{ 'selected' if tipo_actual == 'OTRO' }}>Otro</option>
+                </select>
+            </div>
 
-    <button type="submit">Registrar fuente</button>
-</form>
+            <div class="form-row">
+                <label for="estado">Estado <span class="obligatorio">*</span></label>
+                <select id="estado" name="estado" required>
+                    {% set estado_actual = form_data.estado if form_data else 'ACTIVA' %}
+                    <option value="ACTIVA"   {{ 'selected' if estado_actual == 'ACTIVA' }}>Activa</option>
+                    <option value="INACTIVA" {{ 'selected' if estado_actual == 'INACTIVA' }}>Inactiva</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn" style="margin-top:20px;">Registrar Fuente »</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

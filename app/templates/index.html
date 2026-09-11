@@ -1,0 +1,721 @@
+{% extends "base.html" %}
+{% block title %}Pepito Plus — Portada Editorial{% endblock %}
+
+{% block content %}
+<style>
+/* === EDITORIAL LAYOUT (World News Inspired) === */
+.lead-story-grid {
+    display: grid;
+    grid-template-columns: 1.45fr 1fr;
+    gap: 32px;
+    padding-bottom: 28px;
+    border-bottom: 2px solid #1a1a1a;
+    margin-bottom: 28px;
+}
+
+/* Main Feature Story */
+.lead-story {
+    display: flex;
+    flex-direction: column;
+}
+.lead-story .kicker {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #b71c1c;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.lead-story .kicker::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #b71c1c;
+}
+.lead-story h2.headline {
+    font-family: var(--font-display);
+    font-size: 34px;
+    font-weight: 900;
+    color: #1a1a1a;
+    line-height: 1.15;
+    margin-bottom: 12px;
+}
+.lead-story .read-more-link {
+    font-family: var(--font-serif);
+    font-size: 13px;
+    color: #b71c1c;
+    font-weight: 700;
+    text-decoration: underline;
+    margin-bottom: 14px;
+    display: inline-block;
+}
+.lead-story .read-more-link:hover { color: #800; }
+
+.lead-media {
+    position: relative;
+    border: 1px solid #e0e0e0;
+    background: #000;
+    margin-bottom: 14px;
+}
+.lead-media img {
+    width: 100%;
+    height: 310px;
+    object-fit: cover;
+    display: block;
+}
+.lead-media-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1a1a1a;
+    color: #ccc;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-family: var(--font-sans);
+}
+.carousel-indicators {
+    display: flex;
+    gap: 4px;
+}
+.carousel-indicators span {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: #444;
+}
+.carousel-indicators span.active {
+    background: #b71c1c;
+}
+
+.lead-story p.lead-excerpt {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.65;
+    color: #333;
+    margin-bottom: 18px;
+}
+.lead-story .action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+/* Side Column: News Briefs & Status */
+.side-briefs {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-left: 1px solid #eee;
+    padding-left: 28px;
+}
+.side-header {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 800;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 2px solid #b71c1c;
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+}
+.brief-item {
+    display: flex;
+    gap: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #eee;
+    align-items: flex-start;
+}
+.brief-thumb {
+    width: 80px;
+    height: 65px;
+    object-fit: cover;
+    border: 1px solid #ccc;
+    flex-shrink: 0;
+}
+.brief-info {
+    flex: 1;
+}
+.brief-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.25;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 4px;
+}
+.brief-title:hover { color: #b71c1c; }
+.brief-meta {
+    font-size: 11px;
+    color: #777;
+    font-family: var(--font-sans);
+    line-height: 1.4;
+}
+.brief-link {
+    font-size: 11px;
+    font-weight: 700;
+    color: #b71c1c;
+    text-decoration: none;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-top: 4px;
+}
+.brief-link:hover { text-decoration: underline; }
+
+.quick-links-card {
+    background: #fafaf8;
+    border: 1px solid #e0e0e0;
+    padding: 14px 16px;
+    margin-top: 4px;
+}
+.quick-links-card h4 {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 4px;
+}
+.quick-links-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.quick-links-card li {
+    font-size: 12px;
+    font-family: var(--font-serif);
+    padding: 4px 0;
+    border-bottom: 1px dotted #e5e5e5;
+}
+.quick-links-card li:last-child { border-bottom: none; }
+.quick-links-card li a {
+    color: #1a1a1a;
+    text-decoration: none;
+    display: flex;
+    justify-content: space-between;
+}
+.quick-links-card li a:hover { color: #b71c1c; }
+
+/* === STATS STRIP (Clean Newspaper Databoxes) === */
+.stat-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-bottom: 34px;
+    border: 1px solid #222;
+    background: #fff;
+}
+.stat-item {
+    padding: 16px 20px;
+    border-right: 1px solid #ddd;
+    text-align: center;
+    background: #fafafa;
+}
+.stat-item:last-child { border-right: none; }
+.stat-number {
+    font-family: var(--font-display);
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 1;
+    color: #1a1a1a;
+}
+.stat-label {
+    font-size: 11px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-top: 6px;
+    font-weight: 700;
+}
+
+/* === WORLD IN PHOTOS SECTION (Identical to reference layout) === */
+.gallery-section {
+    margin-bottom: 36px;
+    border-bottom: 2px solid #1a1a1a;
+    padding-bottom: 28px;
+}
+.gallery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 14px;
+    border-bottom: 2px solid #1a1a1a;
+    padding-bottom: 6px;
+}
+.gallery-header h3 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 900;
+    color: #1a1a1a;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+.gallery-header a.more-link {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1565c0;
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+}
+.gallery-header a.more-link:hover { text-decoration: underline; }
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+}
+.gallery-item {
+    display: flex;
+    flex-direction: column;
+}
+.gallery-item img {
+    width: 100%;
+    height: 115px;
+    object-fit: cover;
+    border: 1px solid #ccc;
+    margin-bottom: 8px;
+    transition: opacity 0.2s;
+}
+.gallery-item:hover img { opacity: 0.88; }
+.gallery-item-title {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 800;
+    color: #b71c1c;
+    line-height: 1.25;
+    margin-bottom: 4px;
+    text-decoration: none;
+}
+.gallery-item-title:hover { text-decoration: underline; }
+.gallery-item-desc {
+    font-family: var(--font-serif);
+    font-size: 11px;
+    color: #555;
+    line-height: 1.45;
+}
+
+/* === DEPARTMENTS / FUNCTIONAL MODULES (With Real Photography) === */
+.departments-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    border-bottom: 2px solid #1a1a1a;
+    padding-bottom: 6px;
+}
+.departments-header h3 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 900;
+    color: #1a1a1a;
+    margin: 0;
+}
+.departments-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    margin-bottom: 36px;
+}
+.dept-card {
+    border: 1px solid #ddd;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.15s, box-shadow 0.15s;
+    text-decoration: none;
+    color: inherit;
+}
+.dept-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-color: #b71c1c;
+}
+.dept-media {
+    position: relative;
+    height: 130px;
+    overflow: hidden;
+    background: #111;
+}
+.dept-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s;
+}
+.dept-card:hover .dept-media img {
+    transform: scale(1.04);
+}
+.dept-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 3px 8px;
+}
+.dept-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.dept-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+    line-height: 1.25;
+}
+.dept-desc {
+    font-family: var(--font-serif);
+    font-size: 12px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 12px;
+    flex: 1;
+}
+.dept-cta {
+    font-size: 11px;
+    font-weight: 700;
+    color: #b71c1c;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* === LATEST SEARCHES (Journalistic Articles Style) === */
+.latest-searches-section {
+    border-top: 2px solid #1a1a1a;
+    padding-top: 24px;
+}
+.latest-searches-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+}
+.latest-searches-header h3 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin: 0;
+}
+.search-article-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s, padding-left 0.2s;
+}
+.search-article-row:hover {
+    background: #fff8e1;
+    padding-left: 10px;
+}
+.search-thumb {
+    width: 65px;
+    height: 50px;
+    object-fit: cover;
+    border: 1px solid #ccc;
+    flex-shrink: 0;
+}
+.search-article-info {
+    flex: 1;
+}
+.search-article-title {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.25;
+}
+.search-article-meta {
+    font-size: 11px;
+    color: #777;
+    margin-top: 4px;
+    font-family: var(--font-sans);
+}
+.search-article-meta span {
+    margin-right: 14px;
+}
+
+@media (max-width: 900px) {
+    .lead-story-grid { grid-template-columns: 1fr; }
+    .side-briefs { border-left: none; padding-left: 0; border-top: 1px solid #eee; padding-top: 24px; }
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    .departments-grid { grid-template-columns: 1fr; }
+    .stat-strip { grid-template-columns: repeat(2, 1fr); }
+    .stat-item:nth-child(2) { border-right: none; }
+}
+</style>
+
+<!-- MAIN HERO / LEAD FEATURE STORY (World News Style) -->
+<div class="lead-story-grid">
+    <div class="lead-story">
+        <div class="kicker">Edición Especial · Investigación Abierta</div>
+        <h2 class="headline">Pepito Plus: Centro de Inteligencia y Monitoreo de Información Pública</h2>
+        <a href="/resultados" class="read-more-link">Consultar expediente general de la plataforma »</a>
+
+        <div class="lead-media">
+            <img src="{{ url_for('static', filename='images/hero_investigacion.jpg') }}" alt="Rueda de Prensa y Sala de Investigación Oficial">
+            <div class="lead-media-bar">
+                <span>Fotografía Oficial: Sala de Prensa y Monitoreo de Fuentes Abiertas</span>
+                <div class="carousel-indicators">
+                    <span class="active"></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+
+        <p class="lead-excerpt">
+            Plataforma periodística y analítica para la extracción concurrente de información pública.
+            Permite registrar personas de interés público, parametrizar fuentes oficiales por ámbito geográfico
+            y desplegar rastreadores multihilo configurables en paralelo para recopilar y clasificar documentos en tiempo real.
+        </p>
+
+        <div class="action-buttons">
+            <a href="/busquedas/nueva" class="btn">Iniciar Nueva Búsqueda »</a>
+            <a href="/personas" class="btn btn-gray">Directorio de Personas</a>
+        </div>
+    </div>
+
+    <!-- SIDE COLUMN: NEWS BRIEFS & PLATFORM STATUS -->
+    <div class="side-briefs">
+        <div class="side-header">Cables de Información y Estado del Sistema</div>
+
+        <div class="brief-item">
+            <img src="{{ url_for('static', filename='images/foto_gobierno.jpg') }}" alt="Directorio Oficial" class="brief-thumb">
+            <div class="brief-info">
+                <a href="/personas" class="brief-title">Directorio de Personas de Interés</a>
+                <div class="brief-meta">
+                    <strong>{{ stats.personas }}</strong> personas registradas en base de datos bajo protocolo RF1.
+                </div>
+                <a href="/personas" class="brief-link">Ver Directorio »</a>
+            </div>
+        </div>
+
+        <div class="brief-item">
+            <img src="{{ url_for('static', filename='images/foto_satelite.jpg') }}" alt="Red de Fuentes" class="brief-thumb">
+            <div class="brief-info">
+                <a href="/fuentes" class="brief-title">Agencias y Fuentes Activas</a>
+                <div class="brief-meta">
+                    <strong>{{ stats.fuentes_activas }}</strong> fuentes públicas disponibles para crawling concurrente (RF2).
+                </div>
+                <a href="/fuentes" class="brief-link">Gestionar Fuentes »</a>
+            </div>
+        </div>
+
+        <div class="brief-item">
+            <img src="{{ url_for('static', filename='images/foto_expediente.jpg') }}" alt="Acervo Documental" class="brief-thumb">
+            <div class="brief-info">
+                <a href="/resultados" class="brief-title">Acervo de Documentos Públicos</a>
+                <div class="brief-meta">
+                    <strong>{{ stats.documentos }}</strong> documentos recuperados en <strong>{{ stats.busquedas }}</strong> investigaciones.
+                </div>
+                <a href="/resultados" class="brief-link">Examinar Resultados »</a>
+            </div>
+        </div>
+
+        <!-- QUICK LINKS CARD (World News Reference Style) -->
+        <div class="quick-links-card">
+            <h4>Protocolos y Guía de Operación</h4>
+            <ul>
+                <li><a href="/busquedas/nueva"><span>Crawler multihilo con 1 a 20 workers</span> <span>»</span></a></li>
+                <li><a href="/fuentes/nueva"><span>Alta de periódicos, blogs y sitios de gobierno</span> <span>»</span></a></li>
+                <li><a href="/resultados"><span>Clasificación contextual (Positivo/Neutro/Negativo)</span> <span>»</span></a></li>
+                <li><a href="/metricas"><span>Auditoría de rendimiento y concurrencia</span> <span>»</span></a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- DATA STRIP (Clean Newspaper Databoxes) -->
+<div class="stat-strip">
+    <div class="stat-item">
+        <div class="stat-number">{{ stats.personas }}</div>
+        <div class="stat-label">Personas Registradas</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">{{ stats.fuentes_activas }}</div>
+        <div class="stat-label">Fuentes Activas</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">{{ stats.busquedas }}</div>
+        <div class="stat-label">Investigaciones Concluidas</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">{{ stats.documentos }}</div>
+        <div class="stat-label">Documentos Verificados</div>
+    </div>
+</div>
+
+<!-- "INVESTIGACIÓN EN IMÁGENES" (Identical to "World in photos" from reference) -->
+<div class="gallery-section">
+    <div class="gallery-header">
+        <h3>Investigación en Imágenes</h3>
+        <a href="/resultados" class="more-link">Ver Más Registros Fotográficos »</a>
+    </div>
+    <div class="gallery-grid">
+        <div class="gallery-item">
+            <img src="{{ url_for('static', filename='images/foto_gobierno.jpg') }}" alt="Gacetas Oficiales">
+            <a href="/fuentes" class="gallery-item-title">Fuentes Oficiales</a>
+            <div class="gallery-item-desc">Monitoreo periódico de boletines de prensa, registros públicos y entidades de control.</div>
+        </div>
+        <div class="gallery-item">
+            <img src="{{ url_for('static', filename='images/foto_tribunal.jpg') }}" alt="Auditoría Forense">
+            <a href="/resultados" class="gallery-item-title">Auditoría Forense</a>
+            <div class="gallery-item-desc">Revisión de resoluciones judiciales y menciones de interés en gacetas formales.</div>
+        </div>
+        <div class="gallery-item">
+            <img src="{{ url_for('static', filename='images/foto_satelite.jpg') }}" alt="Agencias de Noticias">
+            <a href="/fuentes" class="gallery-item-title">Agencias de Prensa</a>
+            <div class="gallery-item-desc">Cruce de coberturas en tiempo real con medios de comunicación nacionales e internacionales.</div>
+        </div>
+        <div class="gallery-item">
+            <img src="{{ url_for('static', filename='images/foto_redaccion.jpg') }}" alt="Redacción Concurrente">
+            <a href="/busquedas/nueva" class="gallery-item-title">Rastreo Concurrente</a>
+            <div class="gallery-item-desc">Extracción paralela y balanceo de carga entre múltiples hilos de ejecución.</div>
+        </div>
+        <div class="gallery-item">
+            <img src="{{ url_for('static', filename='images/foto_expediente.jpg') }}" alt="Dossiers Digitales">
+            <a href="/resultados" class="gallery-item-title">Dossiers de Datos</a>
+            <div class="gallery-item-desc">Clasificación contextual y descarte analítico de homónimos y falsos positivos.</div>
+        </div>
+    </div>
+</div>
+
+<!-- CORE DEPARTMENTS / MODULES (WITH AUTHENTIC PHOTOGRAPHY) -->
+<div class="departments-header">
+    <h3>Salas de Redacción y Departamentos Operativos</h3>
+</div>
+
+<div class="departments-grid">
+    <a href="/personas/nueva" class="dept-card">
+        <div class="dept-media">
+            <img src="{{ url_for('static', filename='images/seccion_redaccion.jpg') }}" alt="Redacción y Personas">
+            <span class="dept-badge">Redacción</span>
+        </div>
+        <div class="dept-body">
+            <div class="dept-title">Registrar Persona</div>
+            <div class="dept-desc">Dar de alta perfiles públicos con país, ciudad, cargo, organización y palabras clave vinculadas.</div>
+            <span class="dept-cta">Ingresar Perfil »</span>
+        </div>
+    </a>
+
+    <a href="/personas" class="dept-card">
+        <div class="dept-media">
+            <img src="{{ url_for('static', filename='images/seccion_archivo.jpg') }}" alt="Archivo y Directorio">
+            <span class="dept-badge">Archivo</span>
+        </div>
+        <div class="dept-body">
+            <div class="dept-title">Directorio de Personas</div>
+            <div class="dept-desc">Consultar el catálogo consolidado de personas registradas para iniciar investigaciones puntuales.</div>
+            <span class="dept-cta">Consultar Archivo »</span>
+        </div>
+    </a>
+
+    <a href="/fuentes/nueva" class="dept-card">
+        <div class="dept-media">
+            <img src="{{ url_for('static', filename='images/seccion_fuentes.jpg') }}" alt="Agencias y Fuentes">
+            <span class="dept-badge">Agencias</span>
+        </div>
+        <div class="dept-body">
+            <div class="dept-title">Registrar Fuente Pública</div>
+            <div class="dept-desc">Incorporar portales de prensa, medios digitales, boletines estatales y fuentes por país.</div>
+            <span class="dept-cta">Registrar Fuente »</span>
+        </div>
+    </a>
+
+    <a href="/busquedas/nueva" class="dept-card">
+        <div class="dept-media">
+            <img src="{{ url_for('static', filename='images/seccion_crawler.jpg') }}" alt="Crawler Concurrente">
+            <span class="dept-badge">Investigación</span>
+        </div>
+        <div class="dept-body">
+            <div class="dept-title">Nueva Búsqueda Concurrente</div>
+            <div class="dept-desc">Ejecutar el crawler multihilo con parámetros de concurrencia de 1 a 20 workers simultáneos.</div>
+            <span class="dept-cta">Lanzar Rastreador »</span>
+        </div>
+    </a>
+
+    <a href="/resultados" class="dept-card">
+        <div class="dept-media">
+            <img src="{{ url_for('static', filename='images/seccion_resultados.jpg') }}" alt="Resultados y Expedientes">
+            <span class="dept-badge">Hemeroteca</span>
+        </div>
+        <div class="dept-body">
+            <div class="dept-title">Consultar Resultados</div>
+            <div class="dept-desc">Examinar y filtrar los documentos recopilados por clasificación contextual y estado de verificación.</div>
+            <span class="dept-cta">Revisar Hallazgos »</span>
+        </div>
+    </a>
+
+    <a href="/metricas" class="dept-card">
+        <div class="dept-media">
+            <img src="{{ url_for('static', filename='images/seccion_metricas.jpg') }}" alt="Métricas y Rendimiento">
+            <span class="dept-badge">Métricas</span>
+        </div>
+        <div class="dept-body">
+            <div class="dept-title">Métricas de Concurrencia</div>
+            <div class="dept-desc">Comparativa técnica de tiempos de ejecución y rendimiento con 1 worker vs múltiples workers.</div>
+            <span class="dept-cta">Ver Gráficas »</span>
+        </div>
+    </a>
+</div>
+
+<!-- LATEST SEARCHES (NEWSPAPER BRIEFINGS STYLE) -->
+{% if ultimas %}
+<div class="latest-searches-section">
+    <div class="latest-searches-header">
+        <h3>Investigaciones Recientes en el Sistema</h3>
+        <a href="/resultados" style="font-size:11px;font-weight:700;color:#b71c1c;text-decoration:none;text-transform:uppercase;">
+            Ver Todos los Expedientes »
+        </a>
+    </div>
+
+    <div>
+        {% for b in ultimas %}
+        <a href="/busquedas/{{ b.id }}" class="search-article-row">
+            <img src="{{ url_for('static', filename='images/thumb_politica.jpg') if loop.index % 2 != 0 else url_for('static', filename='images/thumb_economia.jpg') }}" alt="Thumbnail" class="search-thumb">
+            <div class="search-article-info">
+                <div class="search-article-title">
+                    Investigación #{{ b.id }} — Expediente sobre {{ b.persona.nombre_completo }}
+                </div>
+                <div class="search-article-meta">
+                    <span>Ámbito: <strong>{{ b.pais }}</strong></span>
+                    <span>Concurrencia: <strong>{{ b.num_workers }} worker(s)</strong></span>
+                    <span>Fecha: <strong>{{ b.fecha_inicio.strftime("%Y-%m-%d %H:%M") if b.fecha_inicio else "—" }}</strong></span>
+                </div>
+            </div>
+            <span class="badge {% if b.estado == 'COMPLETADA' %}badge-green{% elif b.estado == 'EN_PROGRESO' %}badge-blue{% else %}badge-gray{% endif %}">
+                {{ b.estado }}
+            </span>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

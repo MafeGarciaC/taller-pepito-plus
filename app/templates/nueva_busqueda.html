@@ -2,28 +2,69 @@
 {% block title %}Nueva búsqueda{% endblock %}
 
 {% block content %}
-<h1>Iniciar búsqueda (crawling)</h1>
-<p style="font-size:13px;color:#6b7280;">
-    Esto lanzará el crawler concurrente sobre las fuentes activas del país
-    seleccionado. La página se quedará "cargando" mientras el crawling
-    corre en el servidor (RF3).
-</p>
+<div class="top-bar">
+    <h1>Nueva Investigación Concurrente</h1>
+    <a href="/personas" class="btn btn-gray">← Personas</a>
+</div>
 
-<form method="POST" action="/busquedas/nueva">
-    <label for="persona_id">Persona a consultar <span class="obligatorio">*</span></label>
-    <select id="persona_id" name="persona_id" required>
-        <option value="">-- Selecciona --</option>
-        {% for p in personas %}
-        <option value="{{ p.id }}">{{ p.nombre_completo }} ({{ p.pais }})</option>
-        {% endfor %}
-    </select>
+{% if not personas %}
+<div class="flash error">
+    No hay personas registradas. <a href="/personas/nueva">Registra una primero</a>.
+</div>
+{% else %}
 
-    <label for="pais">País de búsqueda <span class="obligatorio">*</span></label>
-    <input type="text" id="pais" name="pais" required placeholder="Ej: Colombia">
+<div style="display:grid;grid-template-columns:300px 1fr;gap:32px;">
+    <div style="border-right:1px solid #ddd;padding-right:24px;">
+        <img src="{{ url_for('static', filename='images/seccion_crawler.jpg') }}" alt="Crawler Concurrente" style="width:100%;height:140px;object-fit:cover;margin-bottom:12px;border:1px solid #ccc;">
+        <div style="font-family:var(--font-display);font-size:13px;font-weight:800;text-transform:uppercase;margin-bottom:8px;border-bottom:2px solid #b71c1c;padding-bottom:4px;">
+            Despliegue de Workers (RF3)
+        </div>
+        <p style="font-family:var(--font-serif);font-size:13px;color:#555;line-height:1.6;">
+            El crawler distribuido recorrerá las fuentes públicas activas del país seleccionado repartiendo las peticiones entre los workers asignados de forma simultánea.
+        </p>
+    </div>
 
-    <label for="num_workers">Número de workers</label>
-    <input type="number" id="num_workers" name="num_workers" value="5" min="1" max="20">
+    <div>
+        <form method="POST" action="/busquedas/nueva" onsubmit="iniciar(this)">
+            <label for="persona_id">Persona a consultar <span class="obligatorio">*</span></label>
+            <select id="persona_id" name="persona_id" required onchange="autoFillPais(this)">
+                <option value="">-- Selecciona del directorio --</option>
+                {% for p in personas %}
+                <option value="{{ p.id }}" data-pais="{{ p.pais }}">
+                    {{ p.nombre_completo }} — {{ p.pais }}
+                </option>
+                {% endfor %}
+            </select>
 
-    <button type="submit">Iniciar crawling</button>
-</form>
+            <label for="pais">País de búsqueda <span class="obligatorio">*</span></label>
+            <input type="text" id="pais" name="pais" required placeholder="Ej: Colombia">
+            <p class="hint">Se autocompleta con el país del perfil seleccionado; puede modificarse libremente.</p>
+
+            <label for="num_workers">Número de workers concurrentes (RF3)</label>
+            <input type="number" id="num_workers" name="num_workers" value="5" min="1" max="20">
+            <p class="hint">
+                Configure entre 1 y 20 workers para analizar la ganancia en la sección de métricas de concurrencia.
+            </p>
+
+            <button type="submit" id="btn-iniciar" class="btn" style="margin-top:20px;">
+                Iniciar Rastreo Concurrente »
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+function autoFillPais(sel) {
+    var opt = sel.options[sel.selectedIndex];
+    var pais = opt.getAttribute('data-pais') || '';
+    document.getElementById('pais').value = pais;
+}
+function iniciar(form) {
+    var btn = document.getElementById('btn-iniciar');
+    btn.textContent = 'Rastreando fuentes en paralelo... Por favor espere';
+    btn.disabled = true;
+    btn.style.background = '#444';
+}
+</script>
+{% endif %}
 {% endblock %}
