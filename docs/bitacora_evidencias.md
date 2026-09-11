@@ -140,8 +140,9 @@
 **Dónde se tomó:** Navegador, `http://localhost:5000/resultados` con distintas combinaciones de filtros
 **Qué demuestra:** La vista permite filtrar documentos de todas las búsquedas por clasificación contextual, estado de verificación de identidad, fuente y rango de fechas, aplicando los filtros en conjunto (AND). Se verificó que combinar filtros lógicamente incompatibles (ej. PERSONA_DIFERENTE + NEGATIVO) devuelve 0 resultados correctamente, confirmando la integridad de la regla de negocio entre RF7 y RF8.
 
-![Filtro por verificación de identidad](capturas/17_rf9_filtro_verificacion.png)
-![Filtro por clasificación contextual](capturas/18_rf9_filtro_clasificacion.png)
+![Filtro por verificación de identidad](capturas/16_rf9_filtro_verificacion.png)
+
+![Filtro por clasificación contextual](capturas/15_rf8_clasificacion_contextual)
 
 
 ### Medición de concurrencia
@@ -154,7 +155,8 @@
 
 Esto representa una mejora de ~2.4x en velocidad al paralelizar con 5 workers frente a ejecución secuencial (1 worker). El resultado es consistente con la naturaleza I/O-bound del crawler: al esperar respuestas HTTP de forma concurrente en vez de secuencial, el tiempo total se reduce casi proporcionalmente al número de workers, con cierta pérdida de eficiencia por la contención en los Locks compartidos (`lock_encolado`, `lock_reclamo`) y el límite de ancho de banda de la conexión.
 
-![Comparación de tiempos por número de workers](capturas/19_metricas_comparacion.png)
+![Comparación de tiempos por número de workers](capturas/17_metricas_comparacion.png)
+
 
 ### Diagrama de arquitectura de software
 **Sustenta:** Entregable "Diagrama de arquitectura de software"
@@ -162,7 +164,7 @@ Esto representa una mejora de ~2.4x en velocidad al paralelizar con 5 workers fr
 **Dónde se generó:** Diseñado a partir de la estructura real de carpetas del proyecto (app/routes.py, app/crawler/, app/services/, app/models.py)
 **Qué demuestra:** La separación de responsabilidades en capas: presentación, aplicación, servicios de negocio (RF5, RF7, RF8), concurrencia (RF3, RF4), persistencia (ORM) y datos (MySQL), junto con la dependencia externa hacia los sitios web crawleados.
 
-![Diagrama de arquitectura de software](capturas/arquitectura_software.svg)
+![Diagrama de arquitectura de software](capturas/Arquitectura.jpeg)
 
 ### Diagrama de infraestructura
 **Sustenta:** Entregable "Diagrama de infraestructura"
@@ -170,4 +172,4 @@ Esto representa una mejora de ~2.4x en velocidad al paralelizar con 5 workers fr
 **Dónde se generó:** Basado en el entorno real de desarrollo (Windows, Flask dev server, MySQL local)
 **Qué demuestra:** El despliegue actual es de un solo nodo — navegador, servidor de aplicación y base de datos conviven en el mismo equipo — con salida de red hacia Internet para el crawling de fuentes públicas, y versionado del código vía Git/GitHub.
 
-![Diagrama de infraestructura](capturas/infraestructura.svg)
+![Diagrama de infraestructura](capturas/Infraestructura.png)
