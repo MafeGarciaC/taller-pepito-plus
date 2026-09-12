@@ -86,7 +86,7 @@ def registrar_persona():
         flash(f"Persona '{nombre_completo}' registrada correctamente.", "exito")
         return redirect(url_for("main.listado_personas"))
     except Exception as e:
-        session.rollback()
+        session.rollback()  ***
         flash(f"Error al guardar: {str(e)}", "error")
         return render_template("registrar_persona.html", form_data=request.form)
     finally:

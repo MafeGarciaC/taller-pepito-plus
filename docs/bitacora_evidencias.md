@@ -142,7 +142,6 @@
 
 ![Filtro por verificación de identidad](capturas/16_rf9_filtro_verificacion.png)
 
-![Filtro por clasificación contextual](capturas/15_rf8_clasificacion_contextual)
 
 
 ### Medición de concurrencia
